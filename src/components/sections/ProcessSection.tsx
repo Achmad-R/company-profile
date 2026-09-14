@@ -16,6 +16,7 @@ export default function ProcessSection() {
           label={processContent.label}
           heading={processContent.heading}
           intro={processContent.intro}
+          signalNode
         />
         <Reveal className="mt-12">
           <ol className="grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-5">

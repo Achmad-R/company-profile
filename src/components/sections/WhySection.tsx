@@ -15,17 +15,12 @@ export default function WhySection() {
           id="why-heading"
           label={whyContent.label}
           heading={whyContent.heading}
+          signalNode
         />
         <Reveal className="mt-12">
           <ol className="grid gap-x-8 gap-y-10 sm:grid-cols-2">
-          {whyContent.pillars.map((pillar, index) => (
+          {whyContent.pillars.map((pillar) => (
             <li key={pillar.title} className="border-t border-border pt-6">
-              <span
-                aria-hidden="true"
-                className="font-mono text-label text-signal-cyan"
-              >
-                {String(index + 1).padStart(2, "0")}
-              </span>
               <h3 className="mt-3 text-xl font-semibold tracking-tight text-primary-text">
                 {pillar.title}
               </h3>

@@ -17,6 +17,7 @@ export default function AboutSection() {
           id="about-heading"
           label={aboutContent.label}
           heading={aboutContent.heading}
+          signalNode
         />
         <Reveal className="mt-8 grid gap-10 lg:grid-cols-12 lg:gap-8">
           <div className="max-w-copy space-y-5 lg:col-span-7">
@@ -26,12 +27,17 @@ export default function AboutSection() {
               </p>
             ))}
           </div>
-          <ol className="lg:col-span-5">
+          <ol
+            data-signal-path
+            aria-hidden="false"
+            className="relative border-l border-border pl-6 lg:col-span-5"
+          >
             {aboutContent.principles.map((principle, index) => (
-              <li
-                key={principle.title}
-                className="grid grid-cols-[2.5rem_1fr] gap-4 border-t border-border py-6 last:border-b"
-              >
+              <li key={principle.title} className="relative py-5">
+                <span
+                  aria-hidden="true"
+                  className="absolute -left-[29px] top-7 h-2 w-2 rounded-full bg-signal-cyan"
+                />
                 <span
                   aria-hidden="true"
                   className="font-mono text-label text-signal-cyan"

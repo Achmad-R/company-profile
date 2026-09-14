@@ -989,3 +989,69 @@ test("every header destination resolves to a real section", async ({
     expect(new URL(page.url()).hash).toBe(link.href);
   }
 });
+
+test("middle sections share one restrained signal rail", async ({ page }) => {
+  await page.goto("/");
+
+  const dividers = page.locator("[data-signal-divider]");
+  await expect(dividers).toHaveCount(3);
+  for (let i = 0; i < 3; i += 1) {
+    await expect(dividers.nth(i)).toHaveAttribute("aria-hidden", "true");
+    expect(((await dividers.nth(i).textContent()) ?? "").trim()).toBe("");
+  }
+
+  await expect(page.locator("[data-heading-node]")).toHaveCount(4);
+  for (const id of [
+    "about-heading",
+    "capabilities-heading",
+    "method-heading",
+    "why-heading",
+  ]) {
+    const label = page.locator(`div:has(> #${id}) > p`);
+    await expect(label.locator("[data-heading-node]")).toHaveCount(1);
+  }
+});
+
+test("About principles follow a vertical signal path", async ({ page }) => {
+  await page.goto("/");
+
+  const about = page.locator("section#about");
+  const path = about.locator("[data-signal-path]");
+  await expect(path).toHaveCount(1);
+  await expect(path).toHaveAttribute("aria-hidden", "false");
+  await expect(path.locator(":scope > li")).toHaveCount(
+    aboutContent.principles.length,
+  );
+  for (const principle of aboutContent.principles) {
+    await expect(
+      path.getByRole("heading", {
+        level: 3,
+        name: principle.title,
+        exact: true,
+      }),
+    ).toBeVisible();
+    await expect(path.getByText(principle.copy)).toBeVisible();
+  }
+});
+
+test("Why pillars read as statements without index markers", async ({
+  page,
+}) => {
+  await page.goto("/");
+
+  const why = page.locator("section:has(#why-heading)");
+  const items = why.locator("ol > li");
+  await expect(items).toHaveCount(whyContent.pillars.length);
+  for (let i = 0; i < whyContent.pillars.length; i += 1) {
+    const item = items.nth(i);
+    await expect(
+      item.getByRole("heading", {
+        level: 3,
+        name: whyContent.pillars[i].title,
+        exact: true,
+      }),
+    ).toBeVisible();
+    await expect(item.getByText(whyContent.pillars[i].copy)).toBeVisible();
+    await expect(item.locator("span")).toHaveCount(0);
+  }
+});

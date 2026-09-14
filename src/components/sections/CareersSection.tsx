@@ -18,11 +18,16 @@ export default function CareersSection() {
           tabIndex={-1}
           className="text-section font-semibold tracking-tight text-balance text-primary-text"
         >
+          <span
+            aria-hidden="true"
+            data-careers-node
+            className="mr-3 inline-block h-2 w-2 rounded-full bg-signal-violet align-middle"
+          />
           {careersContent.listHeading}
         </h2>
         <Reveal className="mt-8">
-          {careersContent.roles.map((role) => (
-            <ConceptRoleItem key={role.title} role={role} />
+          {careersContent.roles.map((role, index) => (
+            <ConceptRoleItem key={role.title} role={role} index={index} />
           ))}
         </Reveal>
       </Container>

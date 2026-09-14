@@ -1055,3 +1055,61 @@ test("Why pillars read as statements without index markers", async ({
     await expect(item.locator("span")).toHaveCount(0);
   }
 });
+
+test("Talent pairs narrative with a violet statement panel", async ({
+  page,
+}) => {
+  await page.goto("/");
+
+  const talent = page.locator('section[aria-labelledby="talent-heading"]');
+  const panel = talent.locator("[data-talent-statement]");
+  await expect(panel).toHaveCount(1);
+  await expect(panel.getByText(talentContent.candidateStatement)).toBeVisible();
+  expect((await panel.getAttribute("class")) ?? "").toContain(
+    "signal-violet",
+  );
+
+  await expect(
+    talent.getByRole("link", { name: talentContent.cta.label, exact: true }),
+  ).toHaveAttribute("href", anchorTargets.careers);
+});
+
+test("Careers peak carries the violet human language", async ({ page }) => {
+  await page.goto("/");
+
+  const careers = page.locator("section#careers");
+  const node = careers.locator("[data-careers-node]");
+  await expect(node).toHaveCount(1);
+  await expect(node).toHaveAttribute("aria-hidden", "true");
+  expect((await node.getAttribute("class")) ?? "").toContain("signal-violet");
+
+  const indices = careers.locator("[data-role-index]");
+  await expect(indices).toHaveCount(3);
+  for (const [i, want] of ["01", "02", "03"].entries()) {
+    await expect(indices.nth(i)).toHaveText(want);
+    expect((await indices.nth(i).getAttribute("class")) ?? "").toContain(
+      "signal-violet",
+    );
+  }
+
+  const badges = careers.getByText(careersContent.roleConceptLabel, {
+    exact: true,
+  });
+  await expect(badges).toHaveCount(3);
+  for (let i = 0; i < 3; i += 1) {
+    expect((await badges.nth(i).getAttribute("class")) ?? "").toContain(
+      "signal-violet",
+    );
+  }
+
+  await careers
+    .getByRole("button", {
+      name: `${careersContent.viewLabel}: ${careersContent.roles[0].title}`,
+      exact: true,
+    })
+    .click();
+  const panel = careers.locator("#role-senior-product-engineer");
+  await expect(panel).toBeVisible();
+  expect((await panel.getAttribute("class")) ?? "").toContain("signal-violet");
+  await expect(panel.getByText(careersContent.detailClosing)).toBeVisible();
+});

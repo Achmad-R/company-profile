@@ -15,7 +15,13 @@ function rolePanelId(title: string): string {
 // Inline expandable concept role. The approved pattern keeps focus on the
 // trigger; the panel restates the role fields and always ends with the
 // fictional-role disclosure. No apply action exists.
-export default function ConceptRoleItem({ role }: { role: Role }) {
+export default function ConceptRoleItem({
+  role,
+  index,
+}: {
+  role: Role;
+  index: number;
+}) {
   const [open, setOpen] = useState(false);
   const panelId = rolePanelId(role.title);
   const titleId = `${panelId}-title`;
@@ -25,6 +31,13 @@ export default function ConceptRoleItem({ role }: { role: Role }) {
       aria-labelledby={titleId}
       className="border-t border-border py-8 last:border-b"
     >
+      <p
+        aria-hidden="true"
+        data-role-index
+        className="mb-3 font-mono text-label text-signal-violet"
+      >
+        {String(index + 1).padStart(2, "0")}
+      </p>
       <div className="flex flex-wrap items-center gap-3">
         <h3
           id={titleId}
@@ -32,7 +45,7 @@ export default function ConceptRoleItem({ role }: { role: Role }) {
         >
           {role.title}
         </h3>
-        <span className="rounded-full border border-signal-cyan/50 px-3 py-1 font-mono text-label text-signal-cyan">
+        <span className="rounded-full border border-signal-violet/60 px-3 py-1 font-mono text-label text-signal-violet">
           {role.conceptLabel}
         </span>
       </div>
@@ -81,7 +94,7 @@ export default function ConceptRoleItem({ role }: { role: Role }) {
           id={panelId}
           role="region"
           aria-labelledby={titleId}
-          className="mt-6 rounded-panel border border-border bg-surface p-6"
+          className="mt-6 rounded-panel border border-border border-l-2 border-l-signal-violet bg-surface p-6"
         >
           <dl className="grid gap-4 sm:grid-cols-2">
             <div>

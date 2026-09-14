@@ -231,6 +231,46 @@ test("header and hero expose the navigation and CTA contracts", async ({
   await expect(page.getByText(heroContent.trustCue)).toBeVisible();
 });
 
+test("hero CTAs fit inside common initial viewports", async ({ page }) => {
+  const viewports = [
+    { width: 320, height: 800 },
+    { width: 375, height: 812 },
+    { width: 1024, height: 768 },
+    { width: 1440, height: 900 },
+    { width: 1920, height: 1080 },
+  ];
+
+  for (const viewport of viewports) {
+    await page.setViewportSize(viewport);
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.goto("/");
+
+    const main = page.getByRole("main");
+    const ctas = [
+      main.getByRole("link", {
+        name: heroContent.primaryCta.label,
+        exact: true,
+      }),
+      main.getByRole("link", {
+        name: heroContent.secondaryCta.label,
+        exact: true,
+      }),
+    ];
+
+    for (const cta of ctas) {
+      const box = await cta.boundingBox();
+
+      expect(box).not.toBeNull();
+      expect
+        .soft(
+          box!.y + box!.height,
+          `${viewport.width}x${viewport.height} CTA bottom edge`,
+        )
+        .toBeLessThanOrEqual(viewport.height);
+    }
+  }
+});
+
 test("desktop header CTA focuses the Careers heading", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.emulateMedia({ reducedMotion: "reduce" });

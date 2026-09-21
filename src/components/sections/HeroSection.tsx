@@ -7,7 +7,7 @@ export default function HeroSection() {
   return (
     <section aria-labelledby="hero-heading" className="relative overflow-hidden">
       <Container>
-        <div className="grid items-center gap-12 py-16 md:py-20 lg:grid-cols-[1.05fr_0.95fr] lg:gap-10 lg:py-24">
+        <div className="grid items-center gap-10 py-10 md:py-16 lg:grid-cols-[minmax(0,1.15fr)_minmax(20rem,0.85fr)] lg:gap-12 lg:py-16 xl:py-20">
           <div>
             <p
               className="hero-enter font-mono text-label tracking-[0.2em] text-signal-cyan uppercase"
@@ -43,18 +43,18 @@ export default function HeroSection() {
                 {heroContent.secondaryCta.label}
               </ButtonLink>
             </div>
-            <p
-              className="hero-enter mt-6 font-mono text-label text-secondary-text"
-              style={{ animationDelay: "360ms" }}
-            >
-              <span
-                aria-hidden="true"
-                className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-success align-middle"
-              />
-              {heroContent.trustCue}
-            </p>
           </div>
           <EngineeringSignalVisual animationDelay="200ms" />
+          <p
+            className="hero-enter border-t border-border pt-4 font-mono text-label text-secondary-text lg:col-span-2"
+            style={{ animationDelay: "360ms" }}
+          >
+            <span
+              aria-hidden="true"
+              className="mr-2 inline-block h-px w-8 bg-signal-violet align-middle"
+            />
+            {heroContent.trustCue}
+          </p>
         </div>
       </Container>
     </section>

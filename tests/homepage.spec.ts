@@ -231,6 +231,46 @@ test("header and hero expose the navigation and CTA contracts", async ({
   await expect(page.getByText(heroContent.trustCue)).toBeVisible();
 });
 
+test("hero CTAs fit inside common initial viewports", async ({ page }) => {
+  const viewports = [
+    { width: 320, height: 800 },
+    { width: 375, height: 812 },
+    { width: 1024, height: 768 },
+    { width: 1440, height: 900 },
+    { width: 1920, height: 1080 },
+  ];
+
+  for (const viewport of viewports) {
+    await page.setViewportSize(viewport);
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.goto("/");
+
+    const main = page.getByRole("main");
+    const ctas = [
+      main.getByRole("link", {
+        name: heroContent.primaryCta.label,
+        exact: true,
+      }),
+      main.getByRole("link", {
+        name: heroContent.secondaryCta.label,
+        exact: true,
+      }),
+    ];
+
+    for (const cta of ctas) {
+      const box = await cta.boundingBox();
+
+      expect(box).not.toBeNull();
+      expect
+        .soft(
+          box!.y + box!.height,
+          `${viewport.width}x${viewport.height} CTA bottom edge`,
+        )
+        .toBeLessThanOrEqual(viewport.height);
+    }
+  }
+});
+
 test("desktop header CTA focuses the Careers heading", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.emulateMedia({ reducedMotion: "reduce" });
@@ -948,4 +988,202 @@ test("every header destination resolves to a real section", async ({
     ).toBeFocused();
     expect(new URL(page.url()).hash).toBe(link.href);
   }
+});
+
+test("middle sections share one restrained signal rail", async ({ page }) => {
+  await page.goto("/");
+
+  const dividers = page.locator("[data-signal-divider]");
+  await expect(dividers).toHaveCount(3);
+  for (let i = 0; i < 3; i += 1) {
+    await expect(dividers.nth(i)).toHaveAttribute("aria-hidden", "true");
+    expect(((await dividers.nth(i).textContent()) ?? "").trim()).toBe("");
+  }
+
+  await expect(page.locator("[data-heading-node]")).toHaveCount(4);
+  for (const id of [
+    "about-heading",
+    "capabilities-heading",
+    "method-heading",
+    "why-heading",
+  ]) {
+    const label = page.locator(`div:has(> #${id}) > p`);
+    const node = label.locator("[data-heading-node]");
+    await expect(node).toHaveCount(1);
+    await expect(node).toHaveAttribute("aria-hidden", "true");
+  }
+});
+
+test("About principles follow a vertical signal path", async ({ page }) => {
+  await page.goto("/");
+
+  const about = page.locator("section#about");
+  const path = about.locator("[data-signal-path]");
+  await expect(path).toHaveCount(1);
+  await expect(path).toHaveAttribute("aria-hidden", "false");
+  await expect(path.locator(":scope > li")).toHaveCount(
+    aboutContent.principles.length,
+  );
+  for (const principle of aboutContent.principles) {
+    await expect(
+      path.getByRole("heading", {
+        level: 3,
+        name: principle.title,
+        exact: true,
+      }),
+    ).toBeVisible();
+    await expect(path.getByText(principle.copy)).toBeVisible();
+  }
+});
+
+test("Why pillars use an unordered statement list without index markers", async ({
+  page,
+}) => {
+  await page.goto("/");
+
+  const why = page.locator("section:has(#why-heading)");
+  const items = why.locator("ul > li");
+  await expect(items).toHaveCount(whyContent.pillars.length);
+  for (let i = 0; i < whyContent.pillars.length; i += 1) {
+    const item = items.nth(i);
+    await expect(
+      item.getByRole("heading", {
+        level: 3,
+        name: whyContent.pillars[i].title,
+        exact: true,
+      }),
+    ).toBeVisible();
+    await expect(item.getByText(whyContent.pillars[i].copy)).toBeVisible();
+    await expect(item.locator("span")).toHaveCount(0);
+  }
+});
+
+test("Talent pairs an asymmetric narrative with a responsive violet panel", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+
+  const talent = page.locator('section[aria-labelledby="talent-heading"]');
+  const narrative = talent.locator("[data-talent-narrative]");
+  const panel = talent.locator("[data-talent-statement]");
+  await expect(panel).toHaveCount(1);
+  await expect(panel.getByText(talentContent.candidateStatement)).toBeVisible();
+  expect(
+    await panel.evaluate((element) => getComputedStyle(element).borderLeftColor),
+  ).toBe("rgb(138, 124, 255)");
+  expect(
+    await panel.evaluate((element) => getComputedStyle(element).borderLeftWidth),
+  ).toBe("2px");
+
+  const desktopNarrativeBox = await narrative.boundingBox();
+  const desktopPanelBox = await panel.boundingBox();
+  expect(desktopNarrativeBox).not.toBeNull();
+  expect(desktopPanelBox).not.toBeNull();
+  expect(desktopPanelBox!.x).toBeGreaterThan(
+    desktopNarrativeBox!.x + desktopNarrativeBox!.width,
+  );
+  expect(desktopPanelBox!.width).toBeLessThan(desktopNarrativeBox!.width);
+
+  await page.setViewportSize({ width: 375, height: 812 });
+  const mobileNarrativeBox = await narrative.boundingBox();
+  const mobilePanelBox = await panel.boundingBox();
+  expect(mobileNarrativeBox).not.toBeNull();
+  expect(mobilePanelBox).not.toBeNull();
+  expect(Math.abs(mobilePanelBox!.x - mobileNarrativeBox!.x)).toBeLessThanOrEqual(
+    1,
+  );
+  expect(mobilePanelBox!.y).toBeGreaterThanOrEqual(
+    mobileNarrativeBox!.y + mobileNarrativeBox!.height,
+  );
+
+  await expect(
+    talent.getByRole("link", { name: talentContent.cta.label, exact: true }),
+  ).toHaveAttribute("href", anchorTargets.careers);
+});
+
+test("Talent anchor heading stays visible before content reveals", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.goto("/");
+  await page.evaluate(
+    () =>
+      new Promise<void>((resolve) =>
+        requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+      ),
+  );
+
+  const heading = page.getByRole("heading", {
+    level: 2,
+    name: talentContent.heading,
+  });
+  const effectiveOpacity = await heading.evaluate((element) => {
+    const section = element.closest("section");
+    let ancestor: Element | null = element;
+    let opacity = 1;
+
+    while (ancestor && ancestor !== section) {
+      opacity *= Number.parseFloat(getComputedStyle(ancestor).opacity);
+      ancestor = ancestor.parentElement;
+    }
+
+    return opacity;
+  });
+
+  expect(effectiveOpacity).toBe(1);
+});
+
+test("Careers peak carries the violet human language", async ({ page }) => {
+  await page.goto("/");
+
+  const careers = page.locator("section#careers");
+  const node = careers.locator("[data-careers-node]");
+  await expect(node).toHaveCount(1);
+  await expect(node).toHaveAttribute("aria-hidden", "true");
+  expect(
+    await node.evaluate((element) => getComputedStyle(element).backgroundColor),
+  ).toBe("rgb(138, 124, 255)");
+
+  const indices = careers.locator("[data-role-index]");
+  await expect(indices).toHaveCount(3);
+  for (const [i, want] of ["01", "02", "03"].entries()) {
+    await expect(indices.nth(i)).toHaveText(want);
+    await expect(indices.nth(i)).toHaveAttribute("aria-hidden", "true");
+    expect(
+      await indices
+        .nth(i)
+        .evaluate((element) => getComputedStyle(element).color),
+    ).toBe("rgb(138, 124, 255)");
+  }
+
+  const badges = careers.getByText(careersContent.roleConceptLabel, {
+    exact: true,
+  });
+  await expect(badges).toHaveCount(3);
+  for (let i = 0; i < 3; i += 1) {
+    expect(
+      await badges
+        .nth(i)
+        .evaluate((element) => getComputedStyle(element).color),
+    ).toBe("rgb(138, 124, 255)");
+  }
+
+  await careers
+    .getByRole("button", {
+      name: `${careersContent.viewLabel}: ${careersContent.roles[0].title}`,
+      exact: true,
+    })
+    .click();
+  const panel = careers.locator("#role-senior-product-engineer");
+  await expect(panel).toBeVisible();
+  expect(
+    await panel.evaluate((element) => getComputedStyle(element).borderLeftColor),
+  ).toBe("rgb(138, 124, 255)");
+  expect(
+    await panel.evaluate((element) => getComputedStyle(element).borderLeftWidth),
+  ).toBe("2px");
+  await expect(panel.getByText(careersContent.detailClosing)).toBeVisible();
 });

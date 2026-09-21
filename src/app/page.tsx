@@ -2,6 +2,7 @@ import ConceptBar from "@/components/layout/ConceptBar";
 import SiteHeader from "@/components/layout/SiteHeader";
 import SiteFooter from "@/components/layout/SiteFooter";
 import SkipLink from "@/components/layout/SkipLink";
+import SignalDivider from "@/components/ui/SignalDivider";
 import HeroSection from "@/components/sections/HeroSection";
 import AboutSection from "@/components/sections/AboutSection";
 import CapabilitiesSection from "@/components/sections/CapabilitiesSection";
@@ -23,9 +24,12 @@ export default function Home() {
       <main id="main-content" tabIndex={-1} className="flex-1 scroll-mt-24">
         <HeroSection />
         <AboutSection />
+        <SignalDivider />
         <CapabilitiesSection />
+        <SignalDivider />
         <ProcessSection />
         <WorkSection />
+        <SignalDivider />
         <WhySection />
         <TalentSection />
         <CareersSection />

@@ -19,6 +19,7 @@ export default function CapabilitiesSection() {
           label={capabilitiesContent.label}
           heading={capabilitiesContent.heading}
           intro={capabilitiesContent.intro}
+          signalNode
         />
         <Reveal className="mt-12">
           <ol>

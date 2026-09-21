@@ -12,31 +12,35 @@ export default function TalentSection() {
       className="py-section"
     >
       <Container>
-        <Reveal className="grid items-start gap-10 lg:grid-cols-12 lg:gap-12">
-          <div className="lg:col-span-7">
+        <div className="grid items-start gap-10 lg:grid-cols-12 lg:gap-12">
+          <div className="lg:col-span-7" data-talent-narrative>
             <SectionHeading
               id="talent-heading"
               label={talentContent.label}
               heading={talentContent.heading}
             />
-            <p className="mt-6 max-w-copy text-body text-secondary-text">
-              {talentContent.body}
-            </p>
-            <div className="mt-8">
-              <ButtonLink href={talentContent.cta.href}>
-                {talentContent.cta.label}
-              </ButtonLink>
-            </div>
+            <Reveal>
+              <p className="mt-6 max-w-copy text-body text-secondary-text">
+                {talentContent.body}
+              </p>
+              <div className="mt-8">
+                <ButtonLink href={talentContent.cta.href}>
+                  {talentContent.cta.label}
+                </ButtonLink>
+              </div>
+            </Reveal>
           </div>
-          <aside
-            data-talent-statement
-            className="border-l-2 border-l-signal-violet pl-6 lg:col-span-5"
-          >
-            <p className="text-body text-primary-text">
-              {talentContent.candidateStatement}
-            </p>
-          </aside>
-        </Reveal>
+          <Reveal className="lg:col-span-5">
+            <aside
+              data-talent-statement
+              className="border-l-2 border-l-signal-violet pl-6"
+            >
+              <p className="text-body text-primary-text">
+                {talentContent.candidateStatement}
+              </p>
+            </aside>
+          </Reveal>
+        </div>
       </Container>
     </section>
   );

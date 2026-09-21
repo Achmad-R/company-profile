@@ -216,8 +216,10 @@ duplicating the fictional content pack in `docs/PROJECT_PLAN.md`.
 
 ## Phase 5 — Why, Talent, Careers, Contact, Footer (checkpoint 2 approved)
 
-- Why pillars render as a numbered 2×2 editorial grid; Talent keeps the
-  narrative plus the `View concept roles` CTA to `#careers`.
+- Why pillars originally rendered as a numbered 2×2 editorial grid; the
+  later visual-refinement decision below supersedes the numbering while
+  preserving all four statements. Talent keeps the narrative plus the
+  `View concept roles` CTA to `#careers`.
 - Careers list heading is `Concept roles`: the content pack defines no
   website heading for the role list, so the structural label pluralizes the
   mandated badge label instead of inventing section copy. The owner approved
@@ -397,3 +399,40 @@ audit; medians and ranges below are the record.
 - The unused Divider primitive and inert signal-pulse markup were removed.
 - The final browser regression is 78/78, and no review remediation remains
   pending.
+
+## Visual refinement passes A-C — 2026-09-21
+
+- Pass A rebalances the hero copy/visual grid and tightens the display scale
+  so both exact CTAs remain inside common desktop initial viewports. The trust
+  cue becomes the full-width handoff below the copy and Engineering Signal
+  visual; mobile reflow and reduced-motion behavior remain unchanged.
+- Pass B introduces one restrained middle-page signal rail: three decorative
+  dividers and four opt-in heading nodes. About principles become a vertical
+  signal path. Why retains all approved copy as an unordered statement grid,
+  superseding its decorative ordinal treatment without implying sequence.
+- Pass C creates the Careers/Talent twin peak. Talent uses an asymmetric
+  narrative and violet candidate-statement composition. Careers uses violet
+  decorative ordinals, concept badges, and an expanded-panel edge to
+  distinguish the human/recruitment path from the cyan Selected Work peak.
+- Anchor-target headings remain outside `Reveal`. Talent reveals only its body,
+  CTA, and statement panel, so `#talent-heading` cannot become transparent
+  during hydration or before intersection.
+- Inline role details intentionally retain the approved Phase 5 contract:
+  panels restate every existing typed role field with explicit labels and end
+  with the mandatory fictional-role disclosure. The collapsed overview remains
+  useful without interaction; no apply action or new role content is added.
+- Browser checks assert rendered geometry, computed violet color/borders,
+  decorative `aria-hidden` state, and responsive stacking rather than Tailwind
+  class strings. No dependency or new client-component type was introduced;
+  Talent uses two instances of the existing `Reveal` boundary so its anchor
+  heading remains outside animation state.
+- The owner approved Pass C on 2026-09-21. All three passes are proposed as one
+  stacked pull request so their ordered visual changes can be reviewed against
+  the original `main` baseline.
+- Pre-PR review restored the Talent anchor heading outside the reveal boundary,
+  changed the non-sequential Why statements from `ol` to `ul`, and replaced
+  class-string checks with rendered-style and responsive-geometry assertions.
+  The approved role-detail restatement contract was retained.
+- Pre-PR verification: `npm run lint`, `npm run typecheck`, and `npm run build`
+  pass; `npm test` passes 92/92 checks across desktop and mobile Chromium. The
+  existing local `metadataBase` fallback warning remains during build.

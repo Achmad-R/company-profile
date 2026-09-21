@@ -32,6 +32,12 @@ Use targeted evolution rather than a full visual replacement:
 4. Address every audit finding in separate, reviewable passes.
 5. Keep the current stack and add no animation or component dependency.
 
+> **Supersession (2026-09-21):** Item 3 and its matching success criterion
+> are replaced by the owner-approved Phase 5 inline-detail contract. The
+> collapsed overview remains scannable, while expansion restates every existing
+> typed field with explicit labels and adds the mandatory fictional-role
+> disclosure. No new role content or apply action is introduced.
+
 ## Passes
 
 ### Pass A - Hero Compliance
@@ -85,7 +91,7 @@ Lighthouse checks. Update decision and QA evidence only after measured results.
 - Hero CTAs fit inside every required initial desktop viewport.
 - The exact H1, supporting copy, CTA labels, and trust cue remain present.
 - Work and Careers become equal visual peaks after all passes.
-- Role expansion reveals information rather than duplicating the closed state.
+- Role expansion follows the superseding Phase 5 restatement contract above.
 - No horizontal overflow at 320 px and no accessibility regression.
 - Reduced-motion and no-JavaScript content remain usable.
 - Lint, typecheck, browser tests, and production build pass after each pass.
